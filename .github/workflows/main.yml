@@ -1,0 +1,22 @@
+.github/workflows/deploy.yml
+name: Deploy to WebLogic
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: List Files
+        run: ls -l
+
+      - name: Deploy WAR
+        run: |
+          cp sample.war /u01/oracle/user_projects/domains/base_domain/autodeploy/
