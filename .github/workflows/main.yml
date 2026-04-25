@@ -16,6 +16,6 @@ jobs:
       - name: List Files
         run: ls -l
 
-      - name: Deploy WAR
+      - name: Deploy WAR to WebLogic container
         run: |
-          cp sample.war /u01/oracle/user_projects/domains/base_domain/autodeploy/
+          docker cp sample.war 3e774581615b:/u01/oracle/user_projects/domains/base_domain/autodeploy/
