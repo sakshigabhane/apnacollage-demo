@@ -6,16 +6,32 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: self-hosted
+
+    env:
+      WEBLOGIC_URL: t3://127.0.0.1:7001
+      WEBLOGIC_USER: weblogic
+      WEBLOGIC_PASSWORD: weblogic@123
+      APP_NAME: lindaschool
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: List Files
-        run: ls -l
+      - name: Set JAVA_HOME
+        run: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk" >> $GITHUB_ENV
 
-      - name: Deploy WAR to WebLogic container
+      - name: Build WAR file
+        run: mvn clean install
+
+      - name: Deploy to WebLogic
         run: |
-          docker cp sample.war 3e774581615b:/u01/oracle/user_projects/domains/base_domain/autodeploy/
+          java -cp /u01/oracle/wlserver/server/lib/weblogic.jar weblogic.Deployer \
+          -adminurl $WEBLOGIC_URL \
+          -username $WEBLOGIC_USER \
+          -password $WEBLOGIC_PASSWORD \
+          -deploy \
+          -name $APP_NAME \
+          -targets AdminServer \
+          -source target/LindaSchool-0.0.1-SNAPSHOT.war
